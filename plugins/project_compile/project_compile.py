@@ -1001,6 +1001,9 @@ class CCPluginCompile(cocos.CCPlugin):
         if find_ver > float(require_version):
             needUpgrade = True
 
+        # frozax: never upgrade, it breaks everything
+        needUpgrade = False
+
         return (needUpgrade, find_Path)
 
     def _get_msbuild_version(self):
