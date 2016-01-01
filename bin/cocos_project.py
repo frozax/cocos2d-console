@@ -198,6 +198,7 @@ class Platforms(object):
     WP8 = "wp8"
     WP8_1 = "wp8_1"
     METRO = "metro"
+    AMAZON = "amazon"
 
     CFG_CLASS_MAP = {
         ANDROID : "cocos_project.AndroidConfig",
@@ -208,7 +209,8 @@ class Platforms(object):
         LINUX : "cocos_project.LinuxConfig",
         WP8 : "cocos_project.Wp8Config",
         WP8_1 : "cocos_project.Wp8_1Config",
-        METRO : "cocos_project.MetroConfig"
+        METRO : "cocos_project.MetroConfig",
+        AMAZON : "cocos_project.AmazonConfig",
     }
 
     @staticmethod
@@ -238,10 +240,10 @@ class Platforms(object):
     def _filter_platforms(self, platforms):
         ret = []
         platforms_for_os = {
-            "linux" : [ Platforms.WEB, Platforms.LINUX, Platforms.ANDROID ],
-            "mac" : [ Platforms.WEB, Platforms.IOS, Platforms.MAC, Platforms.ANDROID ],
+            "linux" : [ Platforms.WEB, Platforms.LINUX, Platforms.ANDROID, Platforms.AMAZON ],
+            "mac" : [ Platforms.WEB, Platforms.IOS, Platforms.MAC, Platforms.ANDROID, Platforms.AMAZON ],
             "win32" : [ Platforms.WEB, Platforms.WIN32, Platforms.ANDROID, Platforms.WP8,
-                        Platforms.WP8_1, Platforms.METRO]
+                        Platforms.WP8_1, Platforms.METRO, Platforms.AMAZON]
         }
         for p in platforms:
             if cocos.os_is_linux():
@@ -260,22 +262,22 @@ class Platforms(object):
         # generate the platform list for different projects
         if self._project._is_lua_project():
             if self._project._is_native_support():
-                platform_list = [ Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX ]
+                platform_list = [ Platforms.ANDROID, Platforms.AMAZON, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX ]
             else:
                 if self._project.has_android_libs():
-                    platform_list = [ Platforms.ANDROID ]
+                    platform_list = [ Platforms.ANDROID, Platforms.AMAZON ]
                 else:
                     platform_list = []
         elif self._project._is_js_project():
             if self._project._is_native_support():
-                platform_list = [ Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.WEB, Platforms.LINUX, Platforms.WP8, Platforms.WP8_1, Platforms.METRO ]
+                platform_list = [ Platforms.ANDROID, Platforms.AMAZON, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.WEB, Platforms.LINUX, Platforms.WP8, Platforms.WP8_1, Platforms.METRO ]
             else:
                 if self._project.has_android_libs():
-                    platform_list = [ Platforms.ANDROID, Platforms.WEB ]
+                    platform_list = [ Platforms.ANDROID, Platforms.AMAZON, Platforms.WEB ]
                 else:
                     platform_list = [ Platforms.WEB ]
         elif self._project._is_cpp_project():
-            platform_list = [ Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.WP8, Platforms.WP8_1, Platforms.METRO ]
+            platform_list = [ Platforms.ANDROID, Platforms.AMAZON, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.WP8, Platforms.WP8_1, Platforms.METRO ]
 
         # filter the available platform list
         platform_list = self._filter_platforms(platform_list)
@@ -315,7 +317,7 @@ class Platforms(object):
         return self._current is None
 
     def is_android_active(self):
-        return self._current == Platforms.ANDROID
+        return self._current == Platforms.ANDROID or self._current == Platforms.AMAZON
 
     def is_ios_active(self):
         return self._current == Platforms.IOS
@@ -419,6 +421,15 @@ class AndroidConfig(PlatformConfig):
 
         ret = (proj_android_existed or proj_studio_existed)
         return ret
+
+class AmazonConfig(AndroidConfig):
+    def _use_default(self):
+        if self._is_script:
+            self.proj_path = os.path.join(self._proj_root_path, "frameworks", "runtime-src", "proj.amazon")
+            self.studio_path = os.path.join(self._proj_root_path, "frameworks", "runtime-src", "proj.amazon-studio")
+        else:
+            self.proj_path = os.path.join(self._proj_root_path, "proj.amazon")
+            self.studio_path = os.path.join(self._proj_root_path, "proj.amazon-studio")
 
 class iOSConfig(PlatformConfig):
     KEY_PROJ_FILE = "project_file"
