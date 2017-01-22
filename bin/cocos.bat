@@ -1,3 +1,3 @@
 @echo off
-@python "%~dp0/cocos.py" %*
+@d:\gamedev\tools\python27\python.exe "%~dp0/cocos.py" %*
 
