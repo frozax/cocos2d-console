@@ -137,6 +137,7 @@ class CCPluginCompile(cocos.CCPlugin):
                                                                    available_build_types))
         self._no_apk = args.no_apk
         self._no_sign = args.no_sign
+        self._bundle = args.bundle
 
         self.app_abi = None
         if args.app_abi:

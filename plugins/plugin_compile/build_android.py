@@ -509,7 +509,7 @@ class AndroidBuilder(object):
         if project_name is None:
             # use default project name
             project_name = 'app'
-        gen_apk_folder = os.path.join(self.app_android_root, 'app/build/outputs/apk', mode)
+        gen_apk_folder = os.path.join(self.app_android_root, 'app/build/outputs/' + ('bundle' if bundle else 'apk'), mode)
 
         # gradle supports copy assets & compile scripts from engine 3.15
         if not self.gradle_support_ndk:
@@ -562,17 +562,22 @@ class AndroidBuilder(object):
             # copy the apk to output dir
             if output_dir:
                 # support generate unsigned apk
-                if mode == "release" and no_sign:
-                    apk_name = '%s-%s-unsigned.apk' % (project_name, mode)
+                mode_name = mode if not bundle else (mode + "_bundle")
+                if bundle:
+                    apk_name = project_name + ".aab"
                 else:
-                    apk_name = '%s-%s.apk' % (project_name, mode)
+                    if mode == "release" and no_sign:
+                        apk_name = '%s-%s-unsigned.apk' % (project_name, mode)
+                    else:
+                        apk_name = '%s-%s.apk' % (project_name, mode)
                 gen_apk_path = os.path.join(gen_apk_folder, apk_name)
                 if not os.path.exists(output_dir):
                     os.makedirs(output_dir)
                 shutil.copy(gen_apk_path, output_dir)
+                print(gen_apk_path, output_dir)
                 cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_MOVE_APK_FMT', output_dir))
 
-                if mode == "release" and not no_sign:
+                if mode == "release" and not no_sign and not bundle:
                     signed_name = "%s-%s-signed.apk" % (project_name, mode)
                     apk_path = os.path.join(output_dir, signed_name)
                     if os.path.exists(apk_path):
