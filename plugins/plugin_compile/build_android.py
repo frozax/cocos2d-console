@@ -574,7 +574,6 @@ class AndroidBuilder(object):
                 if not os.path.exists(output_dir):
                     os.makedirs(output_dir)
                 shutil.copy(gen_apk_path, output_dir)
-                print(gen_apk_path, output_dir)
                 cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_MOVE_APK_FMT', output_dir))
 
                 if mode == "release" and not no_sign and not bundle:
