@@ -190,6 +190,7 @@ class Project(object):
         return self._project_lang == Project.JS
 
 class Platforms(object):
+    AMAZON = 'amazon'
     ANDROID = 'android'
     IOS = 'ios'
     MAC = 'mac'
@@ -201,6 +202,7 @@ class Platforms(object):
 
     CFG_CLASS_MAP = {
         ANDROID : "cocos_project.AndroidConfig",
+        AMAZON : "cocos_project.AndroidConfig",
         IOS : "cocos_project.iOSConfig",
         MAC : "cocos_project.MacConfig",
         WEB : "cocos_project.WebConfig",
@@ -237,10 +239,10 @@ class Platforms(object):
     def _filter_platforms(self, platforms):
         ret = []
         platforms_for_os = {
-            "linux" : [ Platforms.WEB, Platforms.LINUX, Platforms.ANDROID, Platforms.TIZEN ],
-            "mac" : [ Platforms.WEB, Platforms.IOS, Platforms.MAC, Platforms.ANDROID, Platforms.TIZEN ],
+            "linux" : [ Platforms.WEB, Platforms.LINUX, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON ],
+            "mac" : [ Platforms.WEB, Platforms.IOS, Platforms.MAC, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON ],
             "win32" : [ Platforms.WEB, Platforms.WIN32, Platforms.ANDROID,
-                        Platforms.METRO, Platforms.TIZEN ]
+                        Platforms.METRO, Platforms.TIZEN, Platforms.AMAZON ]
         }
         for p in platforms:
             if cocos.os_is_linux():
@@ -259,7 +261,7 @@ class Platforms(object):
         # generate the platform list for different projects
         if self._project._is_lua_project():
             if self._project._is_native_support():
-                platform_list = [ Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.TIZEN ]
+                platform_list = [ Platforms.AMAZON, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.TIZEN ]
             else:
                 if self._project.has_android_libs():
                     platform_list = [ Platforms.ANDROID ]
@@ -274,7 +276,7 @@ class Platforms(object):
                 else:
                     platform_list = [ Platforms.WEB ]
         elif self._project._is_cpp_project():
-            platform_list = [ Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.METRO, Platforms.TIZEN ]
+            platform_list = [ Platforms.AMAZON, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.METRO, Platforms.TIZEN ]
 
         # filter the available platform list
         platform_list = self._filter_platforms(platform_list)
@@ -314,7 +316,7 @@ class Platforms(object):
         return self._current is None
 
     def is_android_active(self):
-        return self._current == Platforms.ANDROID
+        return self._current == Platforms.ANDROID or self._current == Platforms.AMAZON
 
     def is_ios_active(self):
         return self._current == Platforms.IOS
