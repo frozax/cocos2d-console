@@ -83,7 +83,9 @@ class CCPluginCompile(cocos.CCPlugin):
         group.add_argument("--no-sign", dest="no_sign", action="store_true",
                            help=MultiLanguage.get_string('COMPILE_ARG_NO_SIGN'))
         group.add_argument("--bundle", dest="bundle", action="store_true",
-                           help="Buid bundle instead of apk")
+                           help="Build bundle instead of apk")
+        parser.add_argument("--flavor", dest="flavor",
+                          help="Build a specific flavor")
 
         group = parser.add_argument_group(MultiLanguage.get_string('COMPILE_ARG_GROUP_WIN'))
         group.add_argument("--vs", dest="vs_version", type=int,
@@ -138,6 +140,7 @@ class CCPluginCompile(cocos.CCPlugin):
         self._no_apk = args.no_apk
         self._no_sign = args.no_sign
         self._bundle = args.bundle
+        self._flavor = args.flavor
 
         self.app_abi = None
         if args.app_abi:
@@ -540,7 +543,7 @@ class CCPluginCompile(cocos.CCPlugin):
         # build apk
         if not self._no_apk:
             cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILD_APK'))
-        self.apk_path = builder.do_build_apk(build_mode, self._no_apk, self._no_sign, output_dir, self._custom_step_args, self._ap, self, self._bundle)
+        self.apk_path = builder.do_build_apk(build_mode, self._no_apk, self._no_sign, output_dir, self._custom_step_args, self._ap, self, self._bundle, self._flavor)
         self.android_package, self.android_activity = builder.get_apk_info()
 
         cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILD_SUCCEED'))

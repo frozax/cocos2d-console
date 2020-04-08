@@ -355,7 +355,7 @@ class AndroidBuilder(object):
 
         return ret
 
-    def gradle_build_apk(self, mode, android_platform, compile_obj, bundle):
+    def gradle_build_apk(self, mode, android_platform, compile_obj, bundle, flavor):
         # check the compileSdkVersion & buildToolsVersion
         check_file = os.path.join(self.app_android_root, 'app', 'build.gradle')
         f = open(check_file)
@@ -402,6 +402,8 @@ class AndroidBuilder(object):
                                       cocos.CCPluginError.ERROR_PATH_NOT_FOUND)
 
         mode_str = 'Debug' if mode == 'debug' else 'Release'
+        if flavor:
+            mode_str = flavor.capitalize() + mode_str
         task_prefix = "bundle" if bundle else "assemble"
         cmd = '"%s" --parallel --info %s%s' % (gradle_path, task_prefix, mode_str)
 
@@ -488,7 +490,7 @@ class AndroidBuilder(object):
 
         return self.LuaBuildArch.UNKNOWN
 
-    def do_build_apk(self, mode, no_apk, no_sign, output_dir, custom_step_args, android_platform, compile_obj, bundle):
+    def do_build_apk(self, mode, no_apk, no_sign, output_dir, custom_step_args, android_platform, compile_obj, bundle, flavor):
         assets_dir = os.path.join(self.app_android_root, "app", "assets")
         project_name = None
         setting_file = os.path.join(self.app_android_root, 'settings.gradle')
@@ -509,7 +511,10 @@ class AndroidBuilder(object):
         if project_name is None:
             # use default project name
             project_name = 'app'
-        gen_apk_folder = os.path.join(self.app_android_root, 'app/build/outputs/' + ('bundle' if bundle else 'apk'), mode)
+        gen_apk_folder = os.path.join(self.app_android_root, 'app/build/outputs/' + ('bundle' if bundle else 'apk'))
+        if flavor:
+            gen_apk_folder = os.path.join(gen_apk_folder, flavor)
+        gen_apk_folder = os.path.join(gen_apk_folder, mode)
 
         # gradle supports copy assets & compile scripts from engine 3.15
         if not self.gradle_support_ndk:
@@ -557,7 +562,7 @@ class AndroidBuilder(object):
                     self._gather_sign_info()
 
             # build apk
-            self.gradle_build_apk(mode, android_platform, compile_obj, bundle)
+            self.gradle_build_apk(mode, android_platform, compile_obj, bundle, flavor)
 
             # copy the apk to output dir
             if output_dir:
@@ -566,24 +571,15 @@ class AndroidBuilder(object):
                 if bundle:
                     apk_name = project_name + ".aab"
                 else:
-                    if mode == "release" and no_sign:
-                        apk_name = '%s-%s-unsigned.apk' % (project_name, mode)
-                    else:
-                        apk_name = '%s-%s.apk' % (project_name, mode)
+                    unsigned_suffix = "-unsigned" if mode == "release" and no_sign else ""
+                    apk_name = '%s%s%s%s.apk' % (project_name, "-%s" % flavor if flavor else "", "-%s" % mode, unsigned_suffix)
                 gen_apk_path = os.path.join(gen_apk_folder, apk_name)
                 if not os.path.exists(output_dir):
                     os.makedirs(output_dir)
                 shutil.copy(gen_apk_path, output_dir)
                 cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_MOVE_APK_FMT', output_dir))
 
-                if mode == "release" and not no_sign and not bundle:
-                    signed_name = "%s-%s-signed.apk" % (project_name, mode)
-                    apk_path = os.path.join(output_dir, signed_name)
-                    if os.path.exists(apk_path):
-                        os.remove(apk_path)
-                    os.rename(os.path.join(output_dir, apk_name), apk_path)
-                else:
-                    apk_path = os.path.join(output_dir, apk_name)
+                apk_path = os.path.join(output_dir, apk_name)
 
                 return apk_path
             else:
