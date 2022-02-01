@@ -1014,7 +1014,7 @@ class CCPluginCompile(cocos.CCPlugin):
             return ret
 
         if (major_ver > 3) or (major_ver == 3 and minor_ver >= 7):
-            ret = [ 2013, 2015, 2017, 2019 ]
+            ret = [ 2013, 2015, 2017, 2019, 2022 ]
         else:
             ret = [ 2012, 2013 ]
 
@@ -1064,7 +1064,7 @@ class CCPluginCompile(cocos.CCPlugin):
                                               cocos.CCPluginError.ERROR_WRONG_ARGS)
 
         if commandPath is None:
-            commandPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\deveenv.com"
+            commandPath = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\deveenv.com"
             #message = MultiLanguage.get_string('COMPILE_ERROR_VS_NOT_FOUND')
             #raise cocos.CCPluginError(message, cocos.CCPluginError.ERROR_TOOLS_NOT_FOUND)
 
@@ -1101,7 +1101,7 @@ class CCPluginCompile(cocos.CCPlugin):
                                               cocos.CCPluginError.ERROR_WRONG_ARGS)
 
         if commandPath is None:
-            commandPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin"
+            commandPath = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin"
             #message = MultiLanguage.get_string('COMPILE_ERROR_VS_NOT_FOUND')
             #raise cocos.CCPluginError(message, cocos.CCPluginError.ERROR_TOOLS_NOT_FOUND)
 
