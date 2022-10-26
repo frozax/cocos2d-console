@@ -127,10 +127,12 @@ class CCPluginCompile(cocos.CCPlugin):
 
     def _check_custom_options(self, args):
         # get the mode parameter
-        available_modes = [ 'release', 'debug' ]
-        self._mode = self.check_param(args.mode, 'debug', available_modes,
-                                      MultiLanguage.get_string('COMPILE_ERROR_WRONG_MODE_FMT',
-                                                               available_modes))
+        #available_modes = [ 'release', 'debug' ]
+        #self._mode = self.check_param(args.mode, 'debug', available_modes,
+        #                              MultiLanguage.get_string('COMPILE_ERROR_WRONG_MODE_FMT',
+        #                                                       available_modes))
+        # frozax: don't check, we have more modes dans it'll break anyway
+        self._mode = args.mode
 
         # android arguments
         available_build_types = [ 'cmake','ndk-build', 'none']
@@ -1195,7 +1197,9 @@ class CCPluginCompile(cocos.CCPlugin):
         # build the project
         self.project_name = name
         projectPath = os.path.join(win32_projectdir, sln_name)
-        build_mode = 'Debug' if self._is_debug_mode() else 'Release'
+        # fg better build_mode
+        #build_mode = 'Debug' if self._is_debug_mode() else 'Release'
+        build_mode = ''.join(x.title() for x in self._mode.split('_'))
         self.build_vs_project(projectPath, self.project_name, build_mode, self.vs_version)
 
         # copy files
