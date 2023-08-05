@@ -1148,11 +1148,13 @@ class CCPluginCompile(cocos.CCPlugin):
                 cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_FIND_MSBUILD_FMT', msbuild_path))
 
                 job_number = 2
+                platform = "Win32"
                 build_command = ' '.join([
                     '\"%s\"' % msbuild_path,
                     '\"%s\"' % sln_file,
                     '/target:%s' % project_name,
                     '/property:Configuration=%s' % build_mode,
+                    '/property:Platform=%s' % platform,
                     '/maxcpucount:%s' % job_number
                     ])
 
