@@ -192,6 +192,7 @@ class Project(object):
 class Platforms(object):
     AMAZON = 'amazon'
     ANDROID = 'android'
+    ANDROID_TTKS = 'android_ttks'
     IOS = 'ios'
     MAC = 'mac'
     WEB = 'web'
@@ -202,6 +203,7 @@ class Platforms(object):
 
     CFG_CLASS_MAP = {
         ANDROID : "cocos_project.AndroidConfig",
+        ANDROID_TTKS : "cocos_project.AndroidConfigTTKS",
         AMAZON : "cocos_project.AndroidConfig",
         IOS : "cocos_project.iOSConfig",
         MAC : "cocos_project.MacConfig",
@@ -239,10 +241,10 @@ class Platforms(object):
     def _filter_platforms(self, platforms):
         ret = []
         platforms_for_os = {
-            "linux" : [ Platforms.WEB, Platforms.LINUX, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON ],
-            "mac" : [ Platforms.WEB, Platforms.IOS, Platforms.MAC, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON ],
+            "linux" : [ Platforms.WEB, Platforms.LINUX, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS ],
+            "mac" : [ Platforms.WEB, Platforms.IOS, Platforms.MAC, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS ],
             "win32" : [ Platforms.WEB, Platforms.WIN32, Platforms.ANDROID,
-                        Platforms.METRO, Platforms.TIZEN, Platforms.AMAZON ]
+                        Platforms.METRO, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS ]
         }
         for p in platforms:
             if cocos.os_is_linux():
@@ -261,7 +263,7 @@ class Platforms(object):
         # generate the platform list for different projects
         if self._project._is_lua_project():
             if self._project._is_native_support():
-                platform_list = [ Platforms.AMAZON, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.TIZEN ]
+                platform_list = [ Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.TIZEN ]
             else:
                 if self._project.has_android_libs():
                     platform_list = [ Platforms.ANDROID ]
@@ -276,7 +278,7 @@ class Platforms(object):
                 else:
                     platform_list = [ Platforms.WEB ]
         elif self._project._is_cpp_project():
-            platform_list = [ Platforms.AMAZON, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.METRO, Platforms.TIZEN ]
+            platform_list = [ Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.METRO, Platforms.TIZEN ]
 
         # filter the available platform list
         platform_list = self._filter_platforms(platform_list)
@@ -316,7 +318,7 @@ class Platforms(object):
         return self._current is None
 
     def is_android_active(self):
-        return self._current == Platforms.ANDROID or self._current == Platforms.AMAZON
+        return self._current == Platforms.ANDROID or self._current == Platforms.AMAZON or self._current == Platforms.ANDROID_TTKS
 
     def is_ios_active(self):
         return self._current == Platforms.IOS
@@ -391,12 +393,13 @@ class PlatformConfig(object):
         return ret
 
 class AndroidConfig(PlatformConfig):
+    PATH = "proj.android"
 
     def _use_default(self):
         if self._is_script:
             self.proj_path = os.path.join(self._proj_root_path, "frameworks", "runtime-src", "proj.android")
         else:
-            self.proj_path = os.path.join(self._proj_root_path, "proj.android")
+            self.proj_path = os.path.join(self._proj_root_path, self.PATH)
 
     def _parse_info(self, cfg_info):
         super(AndroidConfig, self)._parse_info(cfg_info)
@@ -404,6 +407,10 @@ class AndroidConfig(PlatformConfig):
     def _is_available(self):
         proj_android_existed = super(AndroidConfig, self)._is_available()
         return proj_android_existed
+
+class AndroidConfigTTKS(AndroidConfig):
+    PATH = "proj.android_ttks"
+
 
 class iOSConfig(PlatformConfig):
     KEY_PROJ_FILE = "project_file"

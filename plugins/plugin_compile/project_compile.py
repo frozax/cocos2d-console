@@ -463,7 +463,6 @@ class CCPluginCompile(cocos.CCPlugin):
         cfg_obj = self._platforms.get_current_config()
         project_android_dir = cfg_obj.proj_path
 
-
         ide_name = 'Android Studio'
         cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_ANDROID_PROJPATH_FMT', (ide_name, project_android_dir)))
 
