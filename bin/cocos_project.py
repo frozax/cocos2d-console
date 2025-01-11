@@ -193,6 +193,7 @@ class Platforms(object):
     AMAZON = 'amazon'
     ANDROID = 'android'
     ANDROID_TTKS = 'android_ttks'
+    ANDROID_ONESTORE = 'android_one'
     IOS = 'ios'
     MAC = 'mac'
     WEB = 'web'
@@ -204,6 +205,7 @@ class Platforms(object):
     CFG_CLASS_MAP = {
         ANDROID : "cocos_project.AndroidConfig",
         ANDROID_TTKS : "cocos_project.AndroidConfigTTKS",
+        ANDROID_ONESTORE : "cocos_project.AndroidConfigOneStore",
         AMAZON : "cocos_project.AndroidConfig",
         IOS : "cocos_project.iOSConfig",
         MAC : "cocos_project.MacConfig",
@@ -241,10 +243,10 @@ class Platforms(object):
     def _filter_platforms(self, platforms):
         ret = []
         platforms_for_os = {
-            "linux" : [ Platforms.WEB, Platforms.LINUX, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS ],
-            "mac" : [ Platforms.WEB, Platforms.IOS, Platforms.MAC, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS ],
+            "linux" : [ Platforms.WEB, Platforms.LINUX, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID_ONESTORE ],
+            "mac" : [ Platforms.WEB, Platforms.IOS, Platforms.MAC, Platforms.ANDROID, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID_ONESTORE ],
             "win32" : [ Platforms.WEB, Platforms.WIN32, Platforms.ANDROID,
-                        Platforms.METRO, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS ]
+                        Platforms.METRO, Platforms.TIZEN, Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID_ONESTORE ]
         }
         for p in platforms:
             if cocos.os_is_linux():
@@ -263,7 +265,7 @@ class Platforms(object):
         # generate the platform list for different projects
         if self._project._is_lua_project():
             if self._project._is_native_support():
-                platform_list = [ Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.TIZEN ]
+                platform_list = [ Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID_ONESTORE, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.TIZEN ]
             else:
                 if self._project.has_android_libs():
                     platform_list = [ Platforms.ANDROID ]
@@ -278,7 +280,7 @@ class Platforms(object):
                 else:
                     platform_list = [ Platforms.WEB ]
         elif self._project._is_cpp_project():
-            platform_list = [ Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.METRO, Platforms.TIZEN ]
+            platform_list = [ Platforms.AMAZON, Platforms.ANDROID_TTKS, Platforms.ANDROID_ONESTORE, Platforms.ANDROID, Platforms.WIN32, Platforms.IOS, Platforms.MAC, Platforms.LINUX, Platforms.METRO, Platforms.TIZEN ]
 
         # filter the available platform list
         platform_list = self._filter_platforms(platform_list)
@@ -318,7 +320,7 @@ class Platforms(object):
         return self._current is None
 
     def is_android_active(self):
-        return self._current == Platforms.ANDROID or self._current == Platforms.AMAZON or self._current == Platforms.ANDROID_TTKS
+        return self._current == Platforms.ANDROID or self._current == Platforms.AMAZON or self._current == Platforms.ANDROID_TTKS or self._current == Platforms.ANDROID_ONESTORE
 
     def is_ios_active(self):
         return self._current == Platforms.IOS
@@ -411,6 +413,8 @@ class AndroidConfig(PlatformConfig):
 class AndroidConfigTTKS(AndroidConfig):
     PATH = "proj.android_ttks"
 
+class AndroidConfigOneStore(AndroidConfig):
+    PATH = "proj.android_one"
 
 class iOSConfig(PlatformConfig):
     KEY_PROJ_FILE = "project_file"
